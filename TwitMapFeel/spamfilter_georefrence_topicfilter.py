@@ -39,11 +39,13 @@ class Filter_OutSpam_ByTopics_ByPopularity():
     dates = []
     
     def __init__(self, tweets_data_path, most_popular=False, filter_by_list=False):
+        print (tweets_data_path)
         self.most_popular = most_popular
         self.filter_by_list = filter_by_list
         self.tweets_data_path = tweets_data_path
         self.tweets = pd.read_json(self.tweets_data_path)
         self.number_of_tweets = len(self.tweets)
+        
     
     #Manage which filters to apply based on the attributes passed
     def ReturnData(self):
@@ -120,23 +122,24 @@ class Filter_OutSpam_ByTopics_ByPopularity():
         return df1
 
     def DescribeData(self):
-        num_tweets = Filter_OutSpam_ByTopics_ByPopularity.number_Tweets_English
+        num_tweets = self.number_of_tweets #Filter_OutSpam_ByTopics_ByPopularity.number_Tweets_English
         percent_tweets_eng = (100 * float(Filter_OutSpam_ByTopics_ByPopularity.number_Tweets_English) / float(self.number_of_tweets))
         num_after_spam = (Filter_OutSpam_ByTopics_ByPopularity.number_After_Filtered_Spam)
         percent_after_spam = (100 * float(num_after_spam) / float(self.number_of_tweets))
         num_Users = Filter_OutSpam_ByTopics_ByPopularity.number_Unique_Users
         num_Spammers = Filter_OutSpam_ByTopics_ByPopularity.number_Spam_Users
-        percent_Spammers = (100 * float(num_Spammers) / float(num_Users))
-        
+ 
+
         return """\tNumber of Tweets to be Processed: {0} 
         \n\tTweets in English: {1} , {2:10.1f}%
         \n\tRemaining afer Spam filter: {3} , {4:10.1f}%
         \n\tUnique Users: {5}
-        \n\tSpammers: {6} , {7:10.1f}%
-        \n\tDates: {8}
-        \n\tFiltered by Most Popular: {9} \tNumber of Most Popular Users: {10}
-        \n\tFiltered by Topic: {11} \tNumber of Tweets Filtered by Topic: {12}
-        """.format( len(self.tweets), num_tweets, percent_tweets_eng, num_after_spam, percent_after_spam, num_Users, num_Spammers, percent_Spammers, Filter_OutSpam_ByTopics_ByPopularity.dates, self.most_popular, Filter_OutSpam_ByTopics_ByPopularity.number_Users_MostPop, self.filter_by_list, Filter_OutSpam_ByTopics_ByPopularity.number_filteredTopic)
+        \n\tSpammers: {6}
+        \n\tDates: {7}
+        \n\tFiltered by Most Popular: {8} \tNumber of Most Popular Users: {9}
+        \n\tFiltered by Topic: {10} \tNumber of Tweets Filtered by Topic: {11}
+        """.format( len(self.tweets), num_tweets, percent_tweets_eng, num_after_spam, percent_after_spam, num_Users, num_Spammers, Filter_OutSpam_ByTopics_ByPopularity.dates, self.most_popular, Filter_OutSpam_ByTopics_ByPopularity.number_Users_MostPop, self.filter_by_list, Filter_OutSpam_ByTopics_ByPopularity.number_filteredTopic)
+
 
     #Return Most Popular
     def ReturnMostPopular(self, df, top_Number):

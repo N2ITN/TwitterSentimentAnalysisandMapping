@@ -10,38 +10,15 @@ Created on Fri Oct 21 09:39:47 2016
 
 import time, pandas as pd
 import folium
+import sys
 
 #Set up: track time of program and set print options
 start = time.time()
 pd.set_option('display.max_colwidth', 500)
 pd.set_option('display.max_rows', 10)  #change this to the number of rows in the display
 
-neighborhoods_geo = r"neighborhoodsSeattlegeojson.json"
-
-sentimentbyN= pd.read_excel(r"SentimentbyNeighborhood_10_24_2016.xlsx")
-sentimentbyN = sentimentbyN[['neighborhood', 'sentiment']]    #= sentimentbyN.loc[ sentimentbyN['neighborhood'] == None]
-
-NwithData = sentimentbyN['neighborhood'].tolist()
-print(len(  NwithData ))
-
-checkDataAvailable = []
-geoN = pd.read_json(neighborhoods_geo)
-feature = geoN['features']
-i = 146
-for f in feature:
-    check = f['properties']['name']
-    
-    if check in NwithData:
-        pass
-    else:
-        print (check)
-        sentimentbyN.loc[i] = [check, 0 ]
-        i+=1
-print((len(sentimentbyN)))
-
 
 #Map neighborhoods
-#Number of employed with auto scale
 def NeighborhoodMap():
     mapLeafletPython = folium.Map(location=[47.616614, -122.334540], zoom_start=12, tiles='Stamen Toner')
     
@@ -54,8 +31,36 @@ def NeighborhoodMap():
                    )
                    
     mapLeafletPython.save('map_Neighboorhoods.html')
-NeighborhoodMap()
 
+print('Enter the local filepath for the json doc with your geography:', str(sys.argv[0]))
+
+try:
+    print('Enter the local filepath of your excel spreadsheet from your sentiment analysis:', str(sys.argv[1]))    
+    neighborhoods_geo = str(sys.argv[0])  #r"neighborhoodsSeattlegeojson.json"
+    sentimentbyN= pd.read_excel(str(sys.argv[1]))
+    sentimentbyN = sentimentbyN[['neighborhood', 'sentiment']]    #= sentimentbyN.loc[ sentimentbyN['neighborhood'] == None]
+
+    NwithData = sentimentbyN['neighborhood'].tolist()
+    print(len(  NwithData ))
+
+    checkDataAvailable = []
+    geoN = pd.read_json(neighborhoods_geo)
+    feature = geoN['features']
+    i = 146
+    for f in feature:
+        check = f['properties']['name']
+        
+        if check in NwithData:
+            pass
+        else:
+            print (check)
+            sentimentbyN.loc[i] = [check, 0 ]
+            i+=1
+    print((len(sentimentbyN)))
+    NeighborhoodMap()
+
+except:
+    print("No file path added for the json file or sentiment analysis file")
  
 end = time.time()
 print(("\n" + "elapsed time:" + str(end - start)))
